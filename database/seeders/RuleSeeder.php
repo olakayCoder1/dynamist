@@ -17,15 +17,15 @@ class RuleSeeder extends Seeder
         $rules = [
             [
                 "id"=> 1,
-                "name"=> "Maximum lenght",
+                "name"=> "Maximum length",
             ],
             [
                 "id"=> 2,
-                "name"=> "Minimum lenght",
+                "name"=> "Minimum length",
             ],
             [
                 "id"=> 3,
-                "name"=> "lenght",
+                "name"=> "length",
             ],
             [
                 "id"=> 4,

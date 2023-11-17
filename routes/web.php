@@ -3,7 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Listing;
-
+use App\Http\Resources\InputTypeResource;
+use App\Models\InputType;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,7 +24,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     //return view('welcome');
-    return view('auth/dashboard', ['title' => ' Admin Dashboard']);
+    return view('auth/dashboard', ['title' => 'Admin Dashboard']);
 })->name('dashboard');
 
 Route::get('/myforms', function () {
@@ -32,7 +33,11 @@ Route::get('/myforms', function () {
 
 
 Route::get('/myforms/create', function () {
-    return view('forms/create');
+    $inputs = InputType::get()
+            ->transform(function($item){
+                return (new InputTypeResource($item));
+            });
+    return view('forms/create', ['title' => 'Olakay', 'inputs'=> $inputs]);
 })->name('new_form');
 
 

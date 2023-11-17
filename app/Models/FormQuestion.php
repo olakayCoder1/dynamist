@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class FormQuestion extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
 }

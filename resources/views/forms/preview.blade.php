@@ -159,7 +159,7 @@
 
         updateInnerHTML();
 
-    console.log('JSinitialisae')
+    
 
 
 

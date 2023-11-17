@@ -6,21 +6,19 @@
                 <h2 class=" text-xl">New Input Setup</h2>
                 <div class="sm:col-span-2">
                     <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Input Question</label>
-                    <textarea id="input-question" rows="8" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500" placeholder="Enter input question"></textarea>
+                    <input id="input-question" rows="8" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500" placeholder="Enter input question"></input>
                 </div>   
+                
                 <div class="sm:col-span-2">
                     <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option type</label>
                     <select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
                         <option selected disabled >Choose answer type</option>
-                        <option value="text">Text input</option>
-                        <option value="number">Number input</option>
-                        <option value="link">Link input</option>
-                        <option value="radio">Radio input</option>
-                        <option value="select">Select input</option>
-                        <option value="checkbox">Checkbox input</option>
-                        <option value="textarea">Textarea input</option>
+                        @foreach($inputs as $input)
+                        <option value="{{ $input->name }}">{{ $input->name }}</option>
+                        @endforeach
                     </select>
                 </div>
+                
         
                 <div id="dynamic-fields" class="mt-4 sm:col-span-2"></div>
                 
@@ -31,7 +29,8 @@
                     <input id="input-required" type="checkbox" value="yes" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="link-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Is the input field required? check the box if yes</label>
                 </div>
-                <button id="add_inputs" type="submit" class="bg-green-500 text-white rounded p-2 mt-4">Submit</button>
+                <div id="checkboxList" style="display: none;"></div>
+                <button id="add_inputs" class="bg-green-500 text-white rounded p-2 mt-4">Submit</button>
             </form>
         
         </section>
@@ -48,16 +47,16 @@
     
 
 
-@section('js-script')
 <script>
+
     const new_form_input_data = [
         {
             "title": "What is your first name",
-            "input_type" : "text",
+            "input_type" : "Short text",
         },
         {
             "title": "What is your gender",
-            "input_type" : "radio",
+            "input_type" : "Radio",
             "options": [
                 {
                     "title":"Male",
@@ -69,47 +68,47 @@
                 }
             ]
         },
-        {
-            "title": "Select your courses of study",
-            "input_type" : "select",
-            "options": [
-                {
-                    "title": "Software Engineer",
-                    "value": "Software Engineer"
-                },
-                {
-                    "title": "DevOp",
-                    "value": "DevOp"
-                },
-                {
-                    "title": "ML/AI",
-                    "value": "ML/AI"
-                }
-            ]
-        },
-        {
-            "title":"Did you have any question?",
-            "input_type": "textarea",
-        },
-        {
-            "title": "Select your courses of study",
-            "input_type" : "checkbox",
-            "options": [
-                {
-                    "title": "Software Engineer",
-                    "value": "Software Engineer"
-                },
-                {
-                    "title": "DevOp",
-                    "value": "DevOp"
-                },
-                {
-                    "title": "ML/AI",
-                    "value": "ML/AI"
-                },
+        // {
+        //     "title": "Select your courses of study",
+        //     "input_type" : "select",
+        //     "options": [
+        //         {
+        //             "title": "Software Engineer",
+        //             "value": "Software Engineer"
+        //         },
+        //         {
+        //             "title": "DevOp",
+        //             "value": "DevOp"
+        //         },
+        //         {
+        //             "title": "ML/AI",
+        //             "value": "ML/AI"
+        //         }
+        //     ]
+        // },
+        // {
+        //     "title":"Did you have any question?",
+        //     "input_type": "textarea",
+        // },
+        // {
+        //     "title": "Select your courses of study",
+        //     "input_type" : "checkbox",
+        //     "options": [
+        //         {
+        //             "title": "Software Engineer",
+        //             "value": "Software Engineer"
+        //         },
+        //         {
+        //             "title": "DevOp",
+        //             "value": "DevOp"
+        //         },
+        //         {
+        //             "title": "ML/AI",
+        //             "value": "ML/AI"
+        //         },
                 
-            ]
-        }
+        //     ]
+        // }
     ]
 
 
@@ -121,11 +120,12 @@
     const errorButton = document.getElementById('error_button');
     const dynamicForm = document.getElementById('dynamic-form');
     const inputQuestion = document.getElementById('input-question');
+    const rulesCheckboxListContainer = document.getElementById('checkboxList');
 
     let keyValuePairs = 1;
     let isSelectingOption = false;
     let optionInput;
-    const formData = {
+    let formData = {
         title: '',
         is_required: false ,
         input_type: '',
@@ -145,7 +145,6 @@
         }
     });
 
-    
 
     dynamicForm.addEventListener('submit', function (e){
         e.preventDefault()
@@ -156,16 +155,28 @@
             if (formData.input_type === ""){
                 alert('Input type is required')
             }
-            console.log(formData.options.length)
-            if (formData.input_type === 'radio' || formData.input_type === 'select' || formData.input_type === 'checkbox'){
+            if (formData.input_type === 'Radio' || formData.input_type === 'Select' || formData.input_type === 'Checkbox'){
                 if(formData.options.length < 1){
                     alert(`Provide option value for : ${formData.input_type } input`)
                 }
             }
-            new_form_input_data.push(formData)
+
+            
             
         }
-        formValues.textContent = JSON.stringify(formData, null, 2);
+        new_form_input_data.push(formData)
+        console.log(new_form_input_data)
+
+        this.reset();
+        formData = {
+            title: '',
+            is_required: false ,
+            input_type: '',
+            options: []
+        }
+        updateInnerHTML()
+        
+        // formValues.textContent = JSON.stringify(formData, null , 2);
     })
 
     categorySelect.addEventListener('change', function (e) {
@@ -175,14 +186,87 @@
         formData.input_type = e.target.value ;
         formData.options = [];
 
+        var inputs = @json($inputs);
+
+        console.log(inputs)
+
         const selectedOption = categorySelect.value;
 
-        if (selectedOption === 'radio' || selectedOption === 'select' || selectedOption === 'checkbox') {
+        if (selectedOption === 'Radio' || selectedOption === 'Select' || selectedOption === 'Checkbox') {
             // Display the initial key-value pair
+
+            // Loop through the array
+            for (var i = 0; i < inputs.length; i++) {
+                // Check if k is equal to the "name" property
+                if (selectedOption === inputs[i].name) {
+                    const selectedObject = inputs[i]
+                    // Check if the object has "rules"
+                    if (inputs[i].rules.length > 0) {
+                        console.log("Yes");
+                        selectedObject.rules.forEach(function(rule) {
+                            var checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.name = 'rules';
+                            checkbox.value = rule.name;
+
+                            var label = document.createElement('label');
+                            label.appendChild(checkbox);
+                            label.appendChild(document.createTextNode(rule.name));
+
+                            rulesCheckboxListContainer.appendChild(label);
+                            rulesCheckboxListContainer.style.display = 'block'
+                        });
+                    } else {
+                        console.log("No rules");
+                    }
+                    // Break the loop since you found a match
+                    break;
+                }
+            }
+
+            // If you want to handle the case when no match is found
+            if (i === inputs.length) {
+                console.log("No match found");
+            }
+
             addKeyValuePair();
             addFieldButton.style.display = 'block'; // Show the "Add Another Key-Value Pair" button
             formData.input_type = selectedOption;
         } else {
+             // Loop through the array
+             for (var i = 0; i < inputs.length; i++) {
+                // Check if k is equal to the "name" property
+                if (selectedOption === inputs[i].name) {
+                    // Check if the object has "rules"
+                    const selectedObject = inputs[i]
+                    if (inputs[i].rules.length > 0) {
+                        console.log("Yes");
+                        selectedObject.rules.forEach(function(rule) {
+                            var checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.name = 'rules';
+                            checkbox.value = rule.name;
+
+                            var label = document.createElement('label');
+                            label.appendChild(checkbox);
+                            label.appendChild(document.createTextNode(rule.name));
+
+                            rulesCheckboxListContainer.appendChild(label);
+                            rulesCheckboxListContainer.style.display = 'block'
+
+                        });
+                    } else {
+                        console.log("No rules");
+                    }
+                    // Break the loop since you found a match
+                    break;
+                }
+            }
+
+            // If you want to handle the case when no match is found
+            if (i === inputs.length) {
+                console.log("No match found");
+            }
             addFieldButton.style.display = 'none'; // Hide the button for other option types
         }
     });
@@ -206,7 +290,7 @@
     });
 
     function addKeyValuePair() {
-        if (formData.input_type === 'select' || formData.input_type === 'radio' || formData.input_type === 'checkbox') {
+        if (formData.input_type === 'Select' || formData.input_type === 'Radio' || formData.input_type === 'Checkbox') {
             if (!isSelectingOption) {
                 // Display the input fields for a new option
                 const keyLabel = document.createElement('label');
@@ -245,7 +329,6 @@
     }
 
   
-
     function showError(text) {
 
 
@@ -277,21 +360,11 @@
 
     }
 
-    
-    // showError('Invalid Credentials')   
 
-
-
-
-
-    // Form Preview code 
-    // Form Preview code 
     // Form Preview code 
     // Form Preview code 
     // Form Preview code 
     
-
-
     function updateInnerHTML() {
         // Get the element by its ID
         var element = document.getElementById("new-form-display-2");
@@ -310,12 +383,12 @@
 
                 element.appendChild(label);
 
-                if (item.input_type === "text") {
+                if (item.input_type === "Short text") {
                     var input = document.createElement("input");
                     input.type = "text";
                     input.className = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5";
                     element.appendChild(input);
-                } else if (item.input_type === "radio") {
+                } else if (item.input_type === "Radio") {
                     var radioContainer = document.createElement("div");
                     radioContainer.className = "space-x-4";
                     for (var j = 0; j < item.options.length; j++) {
@@ -331,7 +404,7 @@
                         radioContainer.appendChild(radioLabel);
                     }
                     element.appendChild(radioContainer);
-                } else if (item.input_type === "select") {
+                } else if (item.input_type === "Select") {
                     var select = document.createElement("select");
                     select.className = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5";
                     for (var j = 0; j < item.options.length; j++) {
@@ -343,12 +416,12 @@
                         select.appendChild(selectOption);
                     }
                     element.appendChild(select);
-                } else if (item.input_type === "textarea") {
+                } else if (item.input_type === "Long text") {
                     var textarea = document.createElement("textarea");
-                    textarea.rows = "8"
+                    textarea.rows = "3"
                     textarea.className = "block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500";
                     element.appendChild(textarea);
-                }else if (item.input_type === "checkbox") {
+                }else if (item.input_type === "Checkbox") {
 
                     var checkboxContainer = document.createElement("div");
                     checkboxContainer.className = "space-x-2";
@@ -385,8 +458,6 @@
     
 
 </script>
-@endsection
-
 </x-auth-layout>
 
 

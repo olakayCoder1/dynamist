@@ -1,22 +1,11 @@
 <x-auth-layout >
 
-
-<h1 class="font-semibold text-3xl">Hello AbdulKabeer</h1>
-
+<h1 class="font-semibold text-2xl">Hello AbdulKabeer</h1>
 <div class="my-4 rounded-lg" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
     <dl class="grid max-w-screen-xl grid-cols-1 sm:grid-cols-2 gap-8 py-4 mx-auto text-gray-900 md:grid-cols-4">
-        <div class="flex flex-col rounded-md bg-white p-6 py-8 shadow-xl">
-            <dt class="mb-2 text-3xl font-extrabold">121</dt>
-            <dd class="text-gray-500 dark:text-gray-400">Total Forms</dd>
-        </div>
-        <div class="flex flex-col rounded-md bg-white p-6 py-8 shadow-xl">
-            <dt class="mb-2 text-3xl font-extrabold">100M+</dt>
-            <dd class="text-gray-500 dark:text-gray-400">Total Responses</dd>
-        </div>
-        <div class="flex flex-col rounded-md bg-white p-6 py-8 shadow-xl">
-            <dt class="mb-2 text-3xl font-extrabold">1000s</dt>
-            <dd class="text-gray-500 dark:text-gray-400">Total Visits</dd>
-        </div>
+        <x-cards.dashboard count='1234' card_title='Total Forms' > </x-cards.dashboard>
+        <x-cards.dashboard count='1234' card_title='Total Forms' > </x-cards.dashboard>
+        <x-cards.dashboard count='1234' card_title='Total Forms' > </x-cards.dashboard>
     </dl>
 </div>
 
@@ -38,7 +27,7 @@ class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
               </button>
               <div class="px-6 py-6 lg:px-8">
                   <h3 class="mb-4 text-xl font-medium text-gray-900 ">Add new form</h3>
-                  <form class="space-y-6" id="new-form">
+                  <form class="space-y-6" id="new-form" >
                       <div>
                           <label for="form-title" class="block mb-2 text-sm font-medium text-gray-900 ">What is your form title?</label>
                           <input type="text" name="form-title" id="form-title" 
@@ -50,7 +39,7 @@ class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
                         <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 
                         focus:ring-blue-500 focus:border-blue-500 " placeholder=""></textarea>
 
-                      <button type="submit" class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
+                      <button class="w-full text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
                                 hover:bg-gradient-to-br focus:outline-none font-medium rounded-lg text-sm px-5 py-3 text-center mr-2 mb-">
                                 Create Form</button>
                     
@@ -61,31 +50,54 @@ class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
   </div> 
 
 
-  @section('js-script')
-  <script>
-    alert('Hello worlf')
-    const dynamicForm = document.getElementById('new-form');
-    const message = document.getElementById('message');
-    const firmTitle = document.getElementById('new-title');
 
-    const myNewForData = {name = null,description = null}
+<script>
 
-    dynamicForm.addEventListener('submit', function (e) {
-        e.preventDefault()
-        console.log(myNewForData)
-        if (!myNewForData.title){
-            alert('Form title is required')
-        }
-    });
+    window.addEventListener('load', function () {
+        
+        const dynamicForm = document.getElementById('new-form');
+        const message = document.getElementById('message');
+        const firmTitle = document.getElementById('form-title');
 
-    message.addEventListener('change', function (e) {
-        myNewForData.title = e.target.value;
-    });
+        const myNewForData = {name:null,description: null}
 
-    firmTitle.addEventListener('change', function (e) {
-        myNewForData.description = e.target.value;
-    });
-  </script>
-  @endsection
-  
+        dynamicForm.addEventListener('submit', function (e) {
+            e.preventDefault()
+            const name = document.getElementById('form-title').value
+            const message = document.getElementById('message').value
+
+            const requestData = {title:name,description:message}
+            console.log(requestData)
+
+            if (!requestData.title){
+                alert('Form title is required')
+            }else{
+                url = '{{ route("createNewForm")}}';
+                fetch(url, {
+                    method : 'POST',
+                    header: {
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify(requestData),   
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); 
+                });
+            }; 
+        });
+
+        message.addEventListener('change', function (e) {
+            console.log(myNewForData)
+            myNewForData.description = e.target.value;
+        });
+
+        firmTitle.addEventListener('change', function (e) {
+            console.log(myNewForData)
+            myNewForData.name = e.target.value;
+        });
+
+    })
+    
+</script>
 </x-auth-layout>

@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\DefaultDataController;
+use App\Http\Controllers\FormController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +25,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('/stocks' , [DefaultDataController::class,'index'])->name('default');
+
+
+Route::post('/form/create' , [FormController::class,'index'])->name('createNewForm');

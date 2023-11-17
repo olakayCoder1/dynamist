@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class InputType extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
 
     public function getHasValidationAttribute($value){
         return $value == 1 ? true : false;
@@ -19,12 +22,14 @@ class InputType extends Model
         return $value == 1 ? true : false;
     }
 
-    public function inputRules()
+    public function rules(): BelongsToMany
     {
-        return $this->hasMany(InputRule::class, 'id', 'input_type_id');
+        return $this->belongsToMany(
+            Rule::class, 
+            'input_rules', 
+            'input_type_id', 
+            'rule_id'
+        );
     }
 
-    public function getInputTypes(){  
-        return $this->all();
-    }
 }

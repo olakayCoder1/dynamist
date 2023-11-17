@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('input_rules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('input_type_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('rule_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('input_type_id')->constrained();
+            $table->foreignId('rule_id')->constrained();
             $table->timestamps();
         });
     }

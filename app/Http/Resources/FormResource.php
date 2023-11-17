@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\InputRuleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InputTypeResource extends JsonResource
+class FormResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,11 +17,8 @@ class InputTypeResource extends JsonResource
         return [
             "id"=> $this->id,
             "name"=> $this->name,
-            "rules" => array_map(function($rule){
-                return [
-                    "name"=> $rule['name']
-                ];
-            },$this->rules->toArray()),
+            "description"=> $this->description,
+            "attachment_banner"=> $this->created_at,
         ];
     }
 }
